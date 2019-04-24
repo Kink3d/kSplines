@@ -1,0 +1,15 @@
+{
+    "name": "Kink3d.Splines.Editor",
+    "references": [
+        "Kink3d.Splines.Runtime"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

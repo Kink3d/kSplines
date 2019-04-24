@@ -1,0 +1,9 @@
+{
+    "name": "com.kink3d.splines",
+    "description": "A bezier spline system for Unity.",
+    "version": "0.1.0",
+    "unity": "2019.1",
+    "displayName": "kSplines",
+    "dependencies": {
+    }
+}
