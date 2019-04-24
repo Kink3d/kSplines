@@ -25,29 +25,37 @@ namespace kTools.SplinesEditor
 		{
 			// Title field
 			EditorGUILayout.Space();
-			EditorGUILayout.LabelField("Points", EditorStyles.boldLabel);
+			{
+				Rect rect = EditorGUILayout.GetControlRect(true);
+				EditorGUI.LabelField(new Rect(rect.x, rect.y, rect.width / 2, rect.height), "Points", EditorStyles.boldLabel);
+			}
 			
 			// Add Points
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Add", EditorStyles.label);
-			if(GUILayout.Button("Start"))
-				m_ActualTarget.CreatePointAtStart();
-			if(GUILayout.Button("Position"))
-				m_ActualTarget.CreatePointAtStart();
-			if(GUILayout.Button("End"))
-				m_ActualTarget.CreatePointAtEnd();
-			EditorGUILayout.EndHorizontal();
+			{
+				Rect rect = EditorGUILayout.GetControlRect(true);
+				EditorGUI.LabelField(new Rect(rect.x, rect.y, rect.width / 2, rect.height), "Add", EditorStyles.label);
+				if(GUI.Button(new Rect(rect.x + (rect.width / 6) * 3, rect.y, rect.width / 6, rect.height), "Start"))
+					m_ActualTarget.CreatePointAtStart();
+				if(GUI.Button(new Rect(rect.x + (rect.width / 6) * 4, rect.y, rect.width / 6, rect.height), "Position"))
+				{
+					PositionPointWindow window = (PositionPointWindow)EditorWindow.GetWindow(typeof(PositionPointWindow));
+					window.Init(m_ActualTarget);
+				}
+				if(GUI.Button(new Rect(rect.x + (rect.width / 6) * 5, rect.y, rect.width / 6, rect.height), "End"))
+					m_ActualTarget.CreatePointAtEnd();
+			}
 
 			// Remove Points
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.LabelField("Remove", EditorStyles.label);
-			if(GUILayout.Button("Start"))
-				m_ActualTarget.RemovePointAtStart();
-			if(GUILayout.Button("Select"))
-				m_ActualTarget.RemovePointAtStart();
-			if(GUILayout.Button("End"))
-				m_ActualTarget.RemovePointAtEnd();
-			EditorGUILayout.EndHorizontal();
+			{
+				Rect rect = EditorGUILayout.GetControlRect(true);
+				EditorGUI.LabelField(new Rect(rect.x, rect.y, rect.width / 2, rect.height), "Remove", EditorStyles.label);
+				if(GUI.Button(new Rect(rect.x + (rect.width / 6) * 3, rect.y, rect.width / 6, rect.height), "Start"))
+					m_ActualTarget.RemovePointAtStart();
+				if(GUI.Button(new Rect(rect.x + (rect.width / 6) * 4, rect.y, rect.width / 6, rect.height), "Select"))
+					m_ActualTarget.RemovePointAtStart();
+				if(GUI.Button(new Rect(rect.x + (rect.width / 6) * 5, rect.y, rect.width / 6, rect.height), "End"))
+					m_ActualTarget.RemovePointAtEnd();
+			}
 		}
 #endregion
 	}

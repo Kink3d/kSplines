@@ -58,7 +58,7 @@ namespace kTools.Splines
         /// Evaluate a position along the Spline using normalized segment lengths.
         /// </summary>
         /// <param name="t">Position along the Spline to evaluate.</param>
-        public Vector3 EvaluateSplineWithNormalizedSegments(float t)
+        public Vector3 EvaluateWithNormalizedSegments(float t)
 		{
             // Validate points
             if(m_Points == null || m_Points.Count == 0)
@@ -111,6 +111,22 @@ namespace kTools.Splines
 
             // Create new Point
             return CreatePoint(position, rotation, 0);
+        }
+
+        /// <summary>
+        /// Create a new Point at a position along the Spline.
+        /// </summary>
+        /// <param name="t">Position along the Spline to create the new Point.</param>
+        public Point CreatePointAtPosition(float t)
+        {
+            // Get position and rotation at position along Spline
+            Transform startPoint = m_Points[0].transform;
+            Vector3 position = EvaluateWithNormalizedSegments(t);
+            Quaternion rotation = Quaternion.identity; // TODO: Evaluate Spline vector at position
+            int index = 0; // TODO: Get index at position
+
+            // Create new Point
+            return CreatePoint(position, rotation, index);
         }
 
         private Point CreatePoint(Vector3 position, Quaternion rotation, int index)
