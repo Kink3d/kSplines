@@ -43,10 +43,11 @@ namespace kTools.Splines
 #region Validation
         private void ValidateSpline()
         {
-            // Update Point handles
+            // Validate Points
             foreach(Point point in m_Points)
             {
                 int index = m_Points.IndexOf(point);
+                point.gameObject.name = string.Format("Point{0}", index);
                 point.UpdateHandles(index, m_Points.Count);
             }
         }
@@ -84,6 +85,34 @@ namespace kTools.Splines
 #endregion
 
 #region Points
+        /// <summary>
+        /// Create a new Point at the end of the Spline.
+        /// </summary>
+        public Point CreatePointAtEnd()
+        {
+            // Get position and rotation at end of Spline
+            Transform endPoint = m_Points[m_Points.Count - 1].transform;
+            Vector3 position = endPoint.position + endPoint.forward;
+            Quaternion rotation = endPoint.rotation;
+
+            // Create new Point
+            return CreatePoint(position, rotation, m_Points.Count);
+        }
+
+        /// <summary>
+        /// Create a new Point at the start of the Spline.
+        /// </summary>
+        public Point CreatePointAtStart()
+        {
+            // Get position and rotation at end of Spline
+            Transform startPoint = m_Points[0].transform;
+            Vector3 position = startPoint.position - startPoint.forward;
+            Quaternion rotation = startPoint.rotation;
+
+            // Create new Point
+            return CreatePoint(position, rotation, 0);
+        }
+
         private Point CreatePoint(Vector3 position, Quaternion rotation, int index)
 		{
             // Validate index
@@ -95,9 +124,10 @@ namespace kTools.Splines
 
             // Create new Point object
             // Set Transform
-			GameObject go = new GameObject(string.Format("Point{0}", m_Points.Count), typeof(Point));
+			GameObject go = new GameObject(string.Format("Point{0}", index), typeof(Point));
 			go.transform.SetPositionAndRotation(position, rotation);
             go.transform.SetParent(this.transform);
+            go.transform.SetSiblingIndex(index);
 			go.transform.localScale = new Vector3(1.0f, 1.0f, 0.25f);
 
             // Initiailize Point
