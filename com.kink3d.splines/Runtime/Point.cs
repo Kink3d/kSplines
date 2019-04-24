@@ -16,10 +16,8 @@ namespace kTools.Splines
         internal void UpdateHandles(int index, int pointCount)
         {
             // Update handle requirements
-            if(index != 0)
-                m_HasBackwardHandle = true;
-            if(index < pointCount - 1)
-                m_HasForwardHandle = true;
+            m_HasBackwardHandle = (index != 0);
+            m_HasForwardHandle = (index < pointCount - 1);
         }
 
         internal Vector3 GetHandle(Direction direction)
