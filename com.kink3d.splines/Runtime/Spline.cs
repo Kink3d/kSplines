@@ -138,6 +138,42 @@ namespace kTools.Splines
             ValidateSpline();
             return point;
 		}
+
+        /// <summary>
+        /// Remove a Point at the end of the Spline.
+        /// </summary>
+        public void RemovePointAtEnd()
+        {
+            // Remove Point
+            RemovePoint(m_Points.Count - 1);
+        }
+
+        /// <summary>
+        /// Remove a Point at the start of the Spline.
+        /// </summary>
+        public void RemovePointAtStart()
+        {
+            // Remove Point
+            RemovePoint(0);
+        }
+
+        private void RemovePoint(int index)
+        {
+            // Validate index
+            if(index < 0 || index > m_Points.Count - 1)
+            {
+                Debug.LogError(string.Format("Failed to remove Point at invalid index {0}", index));
+                return;
+            }
+
+            // Remove point
+            Point point = m_Points[index];
+            m_Points.Remove(point);
+            DestroyImmediate(point.gameObject);
+
+            // Finalise
+            ValidateSpline();
+        }
 #endregion
 
 #region Gizmos
