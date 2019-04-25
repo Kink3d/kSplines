@@ -107,10 +107,17 @@ namespace kTools.Splines
         /// <param name="t">Position along the Spline to evaluate.</param>
         public Vector3 EvaluateWithSegmentLengths(float t, bool loop = false)
 		{
+            int segmentIndex = 0;
+            return EvaluateWithSegmentLengths(t, out segmentIndex, loop);
+		}
+
+        private Vector3 EvaluateWithSegmentLengths(float t, out int segmentIndex, bool loop = false)
+        {
             // Validate points
             if(m_Points == null || m_Points.Count == 0)
             {
                 Debug.LogError("Invalid point list");
+                segmentIndex = 0;
                 return Vector3.zero;
             }
 
@@ -140,8 +147,8 @@ namespace kTools.Splines
             float positionInSpline = Mathf.Lerp(0, splineLength, t);
 
             // Get segment count
-			// Get current segment and T value within it
-            int currentSegment = 0;
+			// Get current segment index and T value within it
+            segmentIndex = 0;
             float currentSegmentT = 0;
             float minLength = 0.0f;
             for(int i = 0; i < segmentLengths.Length; i++)
@@ -152,20 +159,20 @@ namespace kTools.Splines
                     continue;
                 }
                 
-                currentSegment = i;
+                segmentIndex = i;
                 currentSegmentT = (positionInSpline - minLength) / segmentLengths[i];
                 break;
             }
 
             // Reached end of Spline
-            if(currentSegment == segmentCount)
-                return m_Points[currentSegment].transform.position;
+            if(segmentIndex == segmentCount)
+                return m_Points[segmentIndex].transform.position;
 
 			// Interpolate spline segment
-            var startPoint = m_Points[currentSegment];
-			var endPoint = m_Points[currentSegment + 1];
+            var startPoint = m_Points[segmentIndex];
+			var endPoint = m_Points[segmentIndex + 1];
 			return SplineUtil.EvaluateSplineSegment(startPoint, endPoint, currentSegmentT);
-		}
+        }
 #endregion
 
 #region Create Points
@@ -212,13 +219,13 @@ namespace kTools.Splines
         public Point CreatePointAtPosition(float t)
         {
             // Get position and rotation at position along Spline
+            int index = 0;
             Transform startPoint = m_Points[0].transform;
-            Vector3 position = EvaluateWithSegmentLengths(t);
+            Vector3 position = EvaluateWithSegmentLengths(t, out index);
             Quaternion rotation = Quaternion.identity; // TODO: Evaluate Spline vector at position
-            int index = 0; // TODO: Get index at position
 
             // Create new Point
-            Point point = CreatePointNoValidate(position, rotation, index);
+            Point point = CreatePointNoValidate(position, rotation, index + 1);
 
             // Finalise
             ValidateSpline();
