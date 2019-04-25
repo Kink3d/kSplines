@@ -21,12 +21,24 @@ namespace kTools.Splines
             // Parent, register undo and select
             GameObject go = new GameObject("Spline", typeof(Spline));
             GameObjectUtility.SetParentAndAlign(go, menuCommand.context as GameObject);
-            Undo.RegisterCreatedObjectUndo(go, "Create " + go.name);
+            Undo.RegisterCreatedObjectUndo(go, "Create Spline");
             Selection.activeObject = go;
 
             // Initiailize Spline
             Spline spline = go.GetComponent<Spline>();
             spline.Init();
+        }
+
+        private void Reset()
+        {
+            // Add validate to undo callback
+            Undo.undoRedoPerformed += ValidateSpline;
+        }
+
+        private void OnDestroy()
+        {
+            // Remove validate from undo callback
+            Undo.undoRedoPerformed -= ValidateSpline;
         }
 
         private void Init()
@@ -35,20 +47,22 @@ namespace kTools.Splines
             m_Points = new List<Point>();
 
             // Create initial points for convenience
-            CreatePoint(transform.position, transform.rotation, 0);
-			CreatePoint(transform.position + transform.forward, transform.rotation, 1);
+            CreatePointNoValidate(transform.position, transform.rotation, 0);
+			CreatePointNoValidate(transform.position + transform.forward, transform.rotation, 1);
+
+            // Finalize
+            ValidateSpline();
         }
 #endregion
 
 #region Validation
-        private void ValidateSpline()
+        void ValidateSpline()
         {
             // Validate Points
-            foreach(Point point in m_Points)
+            for(int i = 0; i < m_Points.Count; i++)
             {
-                int index = m_Points.IndexOf(point);
-                point.gameObject.name = string.Format("Point{0}", index);
-                point.UpdateHandles(index, m_Points.Count);
+                m_Points[i].gameObject.name = string.Format("Point{0}", i);
+                m_Points[i].UpdateHandles(i, m_Points.Count);
             }
         }
 #endregion
@@ -82,9 +96,71 @@ namespace kTools.Splines
 			var endPoint = m_Points[currentSegment + 1];
 			return SplineUtil.EvaluateSplineSegment(startPoint, endPoint, currentSegmentT);
 		}
+
+        /// <summary>
+        /// Evaluate a position along the Spline using accurate segment lengths.
+        /// </summary>
+        /// <param name="t">Position along the Spline to evaluate.</param>
+        public Vector3 EvaluateWithSegmentLengths(float t)
+		{
+            // Validate points
+            if(m_Points == null || m_Points.Count == 0)
+            {
+                Debug.LogError("Invalid point list");
+                return Vector3.zero;
+            }
+
+            // Get segment count
+            var segmentCount = m_Points.Count - 1;
+
+            // Get length data for Spline
+            void GetLengthData(out float[] segments, out float spline)
+            {
+                segments = new float[segmentCount];
+                spline = 0;
+                for(int i = 0; i < segmentCount; i++)
+                {
+                    segments[i] = SplineUtil.GetSplineSegmentLength(m_Points[i], m_Points[i+1]);
+                    spline += segments[i];
+                }
+            }
+			
+			// Get length data and t position in Spline
+            float[] segmentLengths;
+            float splineLength;
+            GetLengthData(out segmentLengths, out splineLength);
+            float positionInSpline = Mathf.Lerp(0, splineLength, t);
+
+            // Get segment count
+			// Get current segment and T value within it
+            int currentSegment = 0;
+            float currentSegmentT = 0;
+            float minLength = 0.0f;
+            for(int i = 0; i < segmentLengths.Length; i++)
+            {  
+                if(positionInSpline > minLength + segmentLengths[i])
+                {
+                    minLength += segmentLengths[i];
+                    continue;
+                }
+                
+                currentSegment = i;
+                currentSegmentT = (positionInSpline - minLength) / segmentLengths[i];
+                break;
+            }
+
+            // Reached end of Spline
+            if(currentSegment == segmentCount)
+                return m_Points[currentSegment].transform.position;
+
+			// Interpolate spline segment
+            var startPoint = m_Points[currentSegment];
+			var endPoint = m_Points[currentSegment + 1];
+			return SplineUtil.EvaluateSplineSegment(startPoint, endPoint, currentSegmentT);
+		}
 #endregion
 
-#region Points
+#region Create Points
         /// <summary>
         /// Create a new Point at the end of the Spline.
         /// </summary>
@@ -96,7 +172,11 @@ namespace kTools.Splines
             Quaternion rotation = endPoint.rotation;
 
             // Create new Point
-            return CreatePoint(position, rotation, m_Points.Count);
+            Point point = CreatePointNoValidate(position, rotation, m_Points.Count);
+
+            // Finalise
+            ValidateSpline();
+            return point;
         }
 
         /// <summary>
@@ -110,7 +190,11 @@ namespace kTools.Splines
             Quaternion rotation = startPoint.rotation;
 
             // Create new Point
-            return CreatePoint(position, rotation, 0);
+            Point point = CreatePointNoValidate(position, rotation, 0);
+
+            // Finalise
+            ValidateSpline();
+            return point;
         }
 
         /// <summary>
@@ -121,15 +205,19 @@ namespace kTools.Splines
         {
             // Get position and rotation at position along Spline
             Transform startPoint = m_Points[0].transform;
-            Vector3 position = EvaluateWithNormalizedSegments(t);
+            Vector3 position = EvaluateWithSegmentLengths(t);
             Quaternion rotation = Quaternion.identity; // TODO: Evaluate Spline vector at position
             int index = 0; // TODO: Get index at position
 
             // Create new Point
-            return CreatePoint(position, rotation, index);
+            Point point = CreatePointNoValidate(position, rotation, index);
+
+            // Finalise
+            ValidateSpline();
+            return point;
         }
 
-        private Point CreatePoint(Vector3 position, Quaternion rotation, int index)
+        private Point CreatePointNoValidate(Vector3 position, Quaternion rotation, int index)
 		{
             // Validate index
             if(index < 0 || index > m_Points.Count)
@@ -137,6 +225,9 @@ namespace kTools.Splines
                 Debug.LogError(string.Format("Failed to create Point at invalid index {0}", index));
                 return null;
             }
+
+            // Register undo for Spline state before creating Point
+            Undo.RegisterCompleteObjectUndo(this, "Create Point");
 
             // Create new Point object
             // Set Transform
@@ -146,22 +237,32 @@ namespace kTools.Splines
             go.transform.SetSiblingIndex(index);
 			go.transform.localScale = new Vector3(1.0f, 1.0f, 0.25f);
 
+            Undo.RegisterCreatedObjectUndo(go, "Create Point");
+
             // Initiailize Point
             Point point = go.GetComponent<Point>();
 			m_Points.Insert(index, point);
 
             // Finalise
-            ValidateSpline();
             return point;
 		}
+#endregion
 
+#region Remove Points
         /// <summary>
         /// Remove a Point at the end of the Spline.
         /// </summary>
         public void RemovePointAtEnd()
         {
+            // Always maintain two points
+            if(m_Points.Count <= 2)
+                return;
+
             // Remove Point
-            RemovePoint(m_Points.Count - 1);
+            RemovePointNoValidate(m_Points.Count - 1);
+
+            // Finalise
+            ValidateSpline();
         }
 
         /// <summary>
@@ -169,11 +270,18 @@ namespace kTools.Splines
         /// </summary>
         public void RemovePointAtStart()
         {
+            // Always maintain two points
+            if(m_Points.Count <= 2)
+                return;
+
             // Remove Point
-            RemovePoint(0);
+            RemovePointNoValidate(0);
+
+            // Finalise
+            ValidateSpline();
         }
 
-        private void RemovePoint(int index)
+        private void RemovePointNoValidate(int index)
         {
             // Validate index
             if(index < 0 || index > m_Points.Count - 1)
@@ -182,13 +290,13 @@ namespace kTools.Splines
                 return;
             }
 
+            // Register undo for Spline state before creating Point
+            Undo.RegisterCompleteObjectUndo(this, "Remove Point");
+
             // Remove point
             Point point = m_Points[index];
             m_Points.Remove(point);
-            DestroyImmediate(point.gameObject);
-
-            // Finalise
-            ValidateSpline();
+            Undo.DestroyObjectImmediate(point.gameObject);
         }
 #endregion
 

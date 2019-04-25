@@ -10,6 +10,8 @@ namespace kTools.Splines
 		
         [SerializeField]
         private bool m_HasBackwardHandle;
+
+        public Vector3 position => transform.position;
 #endregion
 
 #region Handles

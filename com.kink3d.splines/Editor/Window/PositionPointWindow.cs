@@ -71,7 +71,7 @@ Select a location with the Position field then click Create to create the Point 
 
             // Draw sphere gizmo at Point position
             Handles.color = DebugColors.white.wire;
-            Handles.SphereHandleCap(0, m_Target.EvaluateWithNormalizedSegments(t), Quaternion.identity, 0.1f, EventType.Repaint);
+            Handles.SphereHandleCap(0, m_Target.EvaluateWithSegmentLengths(t), Quaternion.identity, 0.1f, EventType.Repaint);
 
             // Update SceneView
             sceneView.Repaint();
