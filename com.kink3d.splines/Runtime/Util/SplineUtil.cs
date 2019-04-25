@@ -17,6 +17,9 @@ namespace kTools.Splines
 			}
 		};
 
+		// Compute a length of a spline segment by using 5-point Legendre-Gauss quadrature
+		// https://medium.com/@all2one/how-to-compute-the-length-of-a-spline-e44f5f04c40
+		// https://en.wikipedia.org/wiki/Gaussian_quadrature
 		internal static float GetSplineSegmentLength(Point start, Point end)
 		{
 			Vector3 GetDerivative(float t)

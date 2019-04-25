@@ -72,7 +72,7 @@ namespace kTools.Splines
         /// Evaluate a position along the Spline using normalized segment lengths.
         /// </summary>
         /// <param name="t">Position along the Spline to evaluate.</param>
-        public Vector3 EvaluateWithNormalizedSegments(float t)
+        public Vector3 EvaluateWithNormalizedSegments(float t, bool loop = false)
 		{
             // Validate points
             if(m_Points == null || m_Points.Count == 0)
@@ -80,6 +80,10 @@ namespace kTools.Splines
                 Debug.LogError("Invalid point list");
                 return Vector3.zero;
             }
+
+            // Use fractional part for looping
+            if(loop)
+                t = t % 1;
 
 			// Get segment count
 			// Get current segment and T value within it
@@ -101,7 +105,7 @@ namespace kTools.Splines
         /// Evaluate a position along the Spline using accurate segment lengths.
         /// </summary>
         /// <param name="t">Position along the Spline to evaluate.</param>
-        public Vector3 EvaluateWithSegmentLengths(float t)
+        public Vector3 EvaluateWithSegmentLengths(float t, bool loop = false)
 		{
             // Validate points
             if(m_Points == null || m_Points.Count == 0)
@@ -109,6 +113,10 @@ namespace kTools.Splines
                 Debug.LogError("Invalid point list");
                 return Vector3.zero;
             }
+
+            // Use fractional part for looping
+            if(loop)
+                t = t % 1;
 
             // Get segment count
             var segmentCount = m_Points.Count - 1;
