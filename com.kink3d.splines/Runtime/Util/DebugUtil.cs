@@ -5,6 +5,12 @@ namespace kTools.Splines
 	public static class DebugUtil
 	{
 #region Draw
+		/// <summary>
+        /// Draw a line gizmo between two Points.
+        /// </summary>
+        /// <param name="pointA">Start point.</param>
+		/// <param name="pointB">End point.</param>
+		/// <param name="color">DebugColor for the wire.</param>
 		public static void DrawLine(Vector3 pointA, Vector3 pointB, DebugColors.DebugColor color)
 		{
 			// Draw a line gizmo
@@ -12,6 +18,12 @@ namespace kTools.Splines
 			Gizmos.DrawLine(pointA, pointB);
 		}
 
+		/// <summary>
+        /// Draw a handle gizmo for a Point.
+        /// </summary>
+        /// <param name="point">Point to draw handle for.</param>
+		/// <param name="direction">Handle direction.</param>
+		/// <param name="color">DebugColor for the handle.</param>
 		public static void DrawHandle(Point point, Direction direction, DebugColors.DebugColor color)
 		{
 			// Draw a Handle gizmo
