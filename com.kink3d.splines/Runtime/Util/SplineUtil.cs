@@ -65,6 +65,13 @@ namespace kTools.Splines
 			pointB.GetHandle(Direction.Backward) * ( 3.0f * omt * t2 ) +
 			pointB.transform.position * ( t2 * t );
 		}
+
+		internal static Vector3 EvaluateSplineSegmentNormal(Point pointA, Point pointB, float t)
+		{
+			// Evaluate the normal for value t between points A and B
+			return ((6.0f * (t * t)) - (6.0f * t)) * pointA.position + ((3.0f * (t * t)) - ((4.0f * t) + 1)) * pointA.GetHandle(Direction.Forward)
+				 + ((-6.0f * (t * t)) + (6.0f * t)) * pointB.position + ((3.0f * (t * t)) - (2.0f * t)) * pointB.GetHandle(Direction.Backward);
+		}
 #endregion
 	}
 }

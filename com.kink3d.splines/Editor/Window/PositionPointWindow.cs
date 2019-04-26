@@ -28,7 +28,7 @@ Select a location with the Position field then click Create to create the Point 
             m_Target = target;
 
             // Initialize Window
-            titleContent = new GUIContent("Position Point");
+            titleContent = new GUIContent("Create Point");
             minSize = s_WindowSize;
             maxSize = s_WindowSize;
             Show();
@@ -69,9 +69,12 @@ Select a location with the Position field then click Create to create the Point 
 			if(m_Target == null)
 				return;
 
+            // Evaluate Spline at t position
+            SplineValue splineValue = m_Target.EvaluateWithSegmentLengths(t);
+
             // Draw sphere gizmo at Point position
             Handles.color = DebugColors.white.wire;
-            Handles.SphereHandleCap(0, m_Target.EvaluateWithSegmentLengths(t), Quaternion.identity, 0.1f, EventType.Repaint);
+            Handles.SphereHandleCap(0, splineValue.position, Quaternion.identity, 0.1f, EventType.Repaint);
 
             // Update SceneView
             sceneView.Repaint();

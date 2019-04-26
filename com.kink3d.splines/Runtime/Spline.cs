@@ -72,13 +72,14 @@ namespace kTools.Splines
         /// Evaluate a position along the Spline using normalized segment lengths.
         /// </summary>
         /// <param name="t">Position along the Spline to evaluate.</param>
-        public Vector3 EvaluateWithNormalizedSegments(float t, bool loop = false)
+        /// <param name="loop">Allow the t value to loop for inputs above 1.</param>
+        public SplineValue EvaluateWithNormalizedSegments(float t, bool loop = false)
 		{
             // Validate points
             if(m_Points == null || m_Points.Count == 0)
             {
                 Debug.LogError("Invalid point list");
-                return Vector3.zero;
+                return new SplineValue();
             }
 
             // Use fractional part for looping
@@ -88,37 +89,41 @@ namespace kTools.Splines
 			// Get segment count
 			// Get current segment and T value within it
 			var segmentCount = m_Points.Count - 1;
-			var currentSegment = (int)Mathf.Floor((float)segmentCount * t);
-			var currentSegmentT = segmentCount * t - currentSegment;
+			var segment = (int)Mathf.Floor((float)segmentCount * t);
+			var segmentT = segmentCount * t - segment;
 
             // Reached end of Spline
-            if(currentSegment == segmentCount)
-                return m_Points[currentSegment].transform.position;
+            if(segment == segmentCount)
+            {
+                return new SplineValue()
+                {
+                    position = m_Points[segment].transform.position,
+                    normal = SplineUtil.EvaluateSplineSegmentNormal(m_Points[segment], m_Points[segment], segmentT),
+                    segment = segment,
+                };
+            }
 
-			// Interpolate spline segment
-            var startPoint = m_Points[currentSegment];
-			var endPoint = m_Points[currentSegment + 1];
-			return SplineUtil.EvaluateSplineSegment(startPoint, endPoint, currentSegmentT);
+            // Evaluate Spline segment
+            return new SplineValue()
+            {
+                position = SplineUtil.EvaluateSplineSegment(m_Points[segment], m_Points[segment + 1], segmentT),
+                normal = SplineUtil.EvaluateSplineSegmentNormal(m_Points[segment], m_Points[segment + 1], segmentT),
+                segment = segment,
+            };
 		}
 
         /// <summary>
         /// Evaluate a position along the Spline using accurate segment lengths.
         /// </summary>
         /// <param name="t">Position along the Spline to evaluate.</param>
-        public Vector3 EvaluateWithSegmentLengths(float t, bool loop = false)
+        /// <param name="loop">Allow the t value to loop for inputs above 1.</param>
+        public SplineValue EvaluateWithSegmentLengths(float t, bool loop = false)
 		{
-            int segmentIndex = 0;
-            return EvaluateWithSegmentLengths(t, out segmentIndex, loop);
-		}
-
-        private Vector3 EvaluateWithSegmentLengths(float t, out int segmentIndex, bool loop = false)
-        {
             // Validate points
             if(m_Points == null || m_Points.Count == 0)
             {
                 Debug.LogError("Invalid point list");
-                segmentIndex = 0;
-                return Vector3.zero;
+                return new SplineValue();
             }
 
             // Use fractional part for looping
@@ -139,8 +144,8 @@ namespace kTools.Splines
                     spline += segments[i];
                 }
             }
-			
-			// Get length data and t position in Spline
+
+            // Get length data and t position in Spline
             float[] segmentLengths;
             float splineLength;
             GetLengthData(out segmentLengths, out splineLength);
@@ -148,9 +153,9 @@ namespace kTools.Splines
 
             // Get segment count
 			// Get current segment index and T value within it
-            segmentIndex = 0;
-            float currentSegmentT = 0;
-            float minLength = 0.0f;
+            var segment = 0;
+            var segmentT = 0.0f;
+            var minLength = 0.0f;
             for(int i = 0; i < segmentLengths.Length; i++)
             {  
                 if(positionInSpline > minLength + segmentLengths[i])
@@ -159,20 +164,30 @@ namespace kTools.Splines
                     continue;
                 }
                 
-                segmentIndex = i;
-                currentSegmentT = (positionInSpline - minLength) / segmentLengths[i];
+                segment = i;
+                segmentT = (positionInSpline - minLength) / segmentLengths[i];
                 break;
             }
 
             // Reached end of Spline
-            if(segmentIndex == segmentCount)
-                return m_Points[segmentIndex].transform.position;
+            if(segment == segmentCount)
+            {
+                return new SplineValue()
+                {
+                    position = m_Points[segment].transform.position,
+                    normal = SplineUtil.EvaluateSplineSegmentNormal(m_Points[segment], m_Points[segment], segmentT),
+                    segment = segment,
+                };
+            }
 
-			// Interpolate spline segment
-            var startPoint = m_Points[segmentIndex];
-			var endPoint = m_Points[segmentIndex + 1];
-			return SplineUtil.EvaluateSplineSegment(startPoint, endPoint, currentSegmentT);
-        }
+            // Evaluate Spline segment
+            return new SplineValue()
+            {
+                position = SplineUtil.EvaluateSplineSegment(m_Points[segment], m_Points[segment + 1], segmentT),
+                normal = SplineUtil.EvaluateSplineSegmentNormal(m_Points[segment], m_Points[segment + 1], segmentT),
+                segment = segment,
+            };
+		}
 #endregion
 
 #region Create Points
@@ -199,7 +214,7 @@ namespace kTools.Splines
         /// </summary>
         public Point CreatePointAtStart()
         {
-            // Get position and rotation at end of Spline
+            // Get position and rotation at start of Spline
             Transform startPoint = m_Points[0].transform;
             Vector3 position = startPoint.position - startPoint.forward;
             Quaternion rotation = startPoint.rotation;
@@ -218,14 +233,12 @@ namespace kTools.Splines
         /// <param name="t">Position along the Spline to create the new Point.</param>
         public Point CreatePointAtPosition(float t)
         {
-            // Get position and rotation at position along Spline
-            int index = 0;
-            Transform startPoint = m_Points[0].transform;
-            Vector3 position = EvaluateWithSegmentLengths(t, out index);
-            Quaternion rotation = Quaternion.identity; // TODO: Evaluate Spline vector at position
+            // Evaluate spline at t position
+            SplineValue splineValue = EvaluateWithSegmentLengths(t);
+            Quaternion rotation = Quaternion.LookRotation(splineValue.normal);
 
             // Create new Point
-            Point point = CreatePointNoValidate(position, rotation, index + 1);
+            Point point = CreatePointNoValidate(splineValue.position, rotation, splineValue.segment + 1);
 
             // Finalise
             ValidateSpline();
@@ -252,6 +265,7 @@ namespace kTools.Splines
             go.transform.SetSiblingIndex(index);
 			go.transform.localScale = new Vector3(1.0f, 1.0f, 0.25f);
 
+            // Register undo for Point object creation
             Undo.RegisterCreatedObjectUndo(go, "Create Point");
 
             // Initiailize Point
@@ -291,6 +305,23 @@ namespace kTools.Splines
 
             // Remove Point
             RemovePointNoValidate(0);
+
+            // Finalise
+            ValidateSpline();
+        }
+
+        /// <summary>
+        /// Remove a Point by a reference.
+        /// </summary>
+        /// <param name="point">The Point to remove.</param>
+        public void RemovePointByReference(Point point)
+        {
+            // Always maintain two points
+            if(m_Points.Count <= 2)
+                return;
+
+            // Remove Point
+            RemovePointNoValidate(m_Points.IndexOf(point));
 
             // Finalise
             ValidateSpline();
