@@ -52,7 +52,10 @@ namespace kTools.SplinesEditor
 				if(GUI.Button(new Rect(rect.x + (rect.width / 6) * 3, rect.y, rect.width / 6, rect.height), "Start"))
 					m_ActualTarget.RemovePointAtStart();
 				if(GUI.Button(new Rect(rect.x + (rect.width / 6) * 4, rect.y, rect.width / 6, rect.height), "Select"))
-					m_ActualTarget.RemovePointAtStart();
+				{
+					RemovePointWindow window = (RemovePointWindow)EditorWindow.GetWindow(typeof(RemovePointWindow));
+					window.Init(m_ActualTarget);
+				}
 				if(GUI.Button(new Rect(rect.x + (rect.width / 6) * 5, rect.y, rect.width / 6, rect.height), "End"))
 					m_ActualTarget.RemovePointAtEnd();
 			}
