@@ -7,13 +7,16 @@ namespace kTools.Splines
     public class Spline : MonoBehaviour
     {
 #region Data
+#if UNITY_EDITOR
         private static int s_DebugSegments = 20;
-        
+#endif
+
         [SerializeField]
         private List<Point> m_Points;
 #endregion
 
 #region Initialization
+#if UNITY_EDITOR
         [MenuItem("GameObject/kTools/Spline", false, 10)]
         static void CreateSpline(MenuCommand menuCommand)
         {
@@ -40,6 +43,7 @@ namespace kTools.Splines
             // Remove validate from undo callback
             Undo.undoRedoPerformed -= ValidateSpline;
         }
+#endif
 
         private void Init()
         {
@@ -254,8 +258,10 @@ namespace kTools.Splines
                 return null;
             }
 
+#if UNITY_EDITOR
             // Register undo for Spline state before creating Point
             Undo.RegisterCompleteObjectUndo(this, "Create Point");
+#endif
 
             // Create new Point object
             // Set Transform
@@ -265,8 +271,10 @@ namespace kTools.Splines
             go.transform.SetSiblingIndex(index);
 			go.transform.localScale = new Vector3(1.0f, 1.0f, 0.25f);
 
+#if UNITY_EDITOR
             // Register undo for Point object creation
             Undo.RegisterCreatedObjectUndo(go, "Create Point");
+#endif
 
             // Initiailize Point
             Point point = go.GetComponent<Point>();
@@ -336,13 +344,18 @@ namespace kTools.Splines
                 return;
             }
 
+#if UNITY_EDITOR
             // Register undo for Spline state before creating Point
             Undo.RegisterCompleteObjectUndo(this, "Remove Point");
+#endif
 
             // Remove point
             Point point = m_Points[index];
             m_Points.Remove(point);
+
+#if UNITY_EDITOR
             Undo.DestroyObjectImmediate(point.gameObject);
+#endif
         }
 #endregion
 
