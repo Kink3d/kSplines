@@ -4,6 +4,7 @@ using UnityEditor;
 
 namespace kTools.Splines
 {
+    [AddComponentMenu("kTools/Spline")]
     public class Spline : MonoBehaviour
     {
 #region Data

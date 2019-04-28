@@ -2,6 +2,7 @@
 
 namespace kTools.Splines
 {
+    [AddComponentMenu("")]
     public class Point : MonoBehaviour
     {
 #region Data
