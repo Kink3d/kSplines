@@ -6,10 +6,7 @@ namespace kTools.Splines
     public class SplinePoint : MonoBehaviour
     {
 #region Properties
-        /// <summary>
-        /// Position in world space.
-        /// </summary>
-        public Vector3 position => transform.position;
+        internal Vector3 position => transform.position;
 #endregion
 
 #region Data

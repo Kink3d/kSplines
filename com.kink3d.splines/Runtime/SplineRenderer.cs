@@ -8,6 +8,9 @@ public class SplineRenderer : MonoBehaviour
 #region Components
     private LineRenderer m_LineRenderer;
 
+    /// <summary>
+    /// LineRenderer component to use for rendering.
+    /// </summary>
     public LineRenderer lineRenderer
     {
         get
@@ -63,7 +66,7 @@ public class SplineRenderer : MonoBehaviour
         for(int i = 0; i < pointCount; i++)
         {
             float t = (float)i / (float)pointCount;
-            SplineValue value = spline.EvaluateWithSegmentLengths(t, false);
+            SplineValue value = spline.Evaluate(t, false);
             m_Points[i] = value.position;
         }
 

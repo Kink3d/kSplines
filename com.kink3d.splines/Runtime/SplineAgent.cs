@@ -84,7 +84,7 @@ public class SplineAgent : MonoBehaviour
             
             // Evaluate and position
             bool looping = loopMode == LoopMode.Loop;
-            SplineValue value = spline.EvaluateWithSegmentLengths(t, looping);
+            SplineValue value = spline.Evaluate(t, looping);
             transform.position = value.position;
             yield return null;
         }
@@ -100,7 +100,7 @@ public class SplineAgent : MonoBehaviour
         // If reset on complete set back to 0
         else if(resetOnComplete)
         {
-            SplineValue value = spline.EvaluateWithSegmentLengths(0, false);
+            SplineValue value = spline.Evaluate(0, false);
             transform.position = value.position;
         }
     }

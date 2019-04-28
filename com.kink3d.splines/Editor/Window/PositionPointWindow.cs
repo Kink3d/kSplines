@@ -70,7 +70,7 @@ Select a location with the Position field then click Create to create the Point 
 				return;
 
             // Evaluate Spline at t position
-            SplineValue splineValue = m_Target.EvaluateWithSegmentLengths(t);
+            SplineValue splineValue = m_Target.Evaluate(t);
 
             // Draw sphere gizmo at Point position
             Handles.color = DebugColors.white.wire;

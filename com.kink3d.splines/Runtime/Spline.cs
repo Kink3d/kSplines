@@ -74,55 +74,11 @@ namespace kTools.Splines
 
 #region Evaluation
         /// <summary>
-        /// Evaluate a position along the Spline using normalized segment lengths.
+        /// Evaluates the Spline at a given position t, and returns values at that position.
         /// </summary>
         /// <param name="t">Position along the Spline to evaluate.</param>
-        /// <param name="loop">Allow the t value to loop for inputs above 1.</param>
-        public SplineValue EvaluateWithNormalizedSegments(float t, bool loop = false)
-		{
-            // Validate points
-            if(m_Points == null || m_Points.Count == 0)
-            {
-                Debug.LogError("Invalid point list");
-                return new SplineValue();
-            }
-
-            // Use fractional part for looping
-            if(loop)
-                t = t % 1;
-
-			// Get segment count
-			// Get current segment and T value within it
-			var segmentCount = m_Points.Count - 1;
-			var segment = (int)Mathf.Floor((float)segmentCount * t);
-			var segmentT = segmentCount * t - segment;
-
-            // Reached end of Spline
-            if(segment == segmentCount)
-            {
-                return new SplineValue()
-                {
-                    position = m_Points[segment].transform.position,
-                    normal = SplineUtil.EvaluateSplineSegmentNormal(m_Points[segment], m_Points[segment], segmentT),
-                    segment = segment,
-                };
-            }
-
-            // Evaluate Spline segment
-            return new SplineValue()
-            {
-                position = SplineUtil.EvaluateSplineSegment(m_Points[segment], m_Points[segment + 1], segmentT),
-                normal = SplineUtil.EvaluateSplineSegmentNormal(m_Points[segment], m_Points[segment + 1], segmentT),
-                segment = segment,
-            };
-		}
-
-        /// <summary>
-        /// Evaluate a position along the Spline using accurate segment lengths.
-        /// </summary>
-        /// <param name="t">Position along the Spline to evaluate.</param>
-        /// <param name="loop">Allow the t value to loop for inputs above 1.</param>
-        public SplineValue EvaluateWithSegmentLengths(float t, bool loop = false)
+        /// <param name="loop">Allow the t value to loop for values above 1.</param>
+        public SplineValue Evaluate(float t, bool loop = false)
 		{
             // Validate points
             if(m_Points == null || m_Points.Count == 0)
@@ -239,7 +195,7 @@ namespace kTools.Splines
         public SplinePoint CreatePointAtPosition(float t)
         {
             // Evaluate spline at t position
-            SplineValue splineValue = EvaluateWithSegmentLengths(t);
+            SplineValue splineValue = Evaluate(t);
             Quaternion rotation = Quaternion.LookRotation(splineValue.normal);
 
             // Create new Point
@@ -325,8 +281,16 @@ namespace kTools.Splines
         /// <param name="point">The Point to remove.</param>
         public void RemovePointByReference(SplinePoint point)
         {
-            // Always maintain two points
+            // Always maintain two Points
             if(m_Points.Count <= 2)
+                return;
+
+            // If Point is null return
+            if(point == null)
+                return;
+
+            // If the Point is not in the Spline return
+            if(!m_Points.Contains(point))
                 return;
 
             // Remove Point
