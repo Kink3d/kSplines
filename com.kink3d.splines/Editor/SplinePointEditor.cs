@@ -4,7 +4,7 @@ using kTools.Splines;
 
 namespace kTools.SplinesEditor
 {
-	[CustomEditor(typeof(SplinePoint))]
+	[CanEditMultipleObjects, CustomEditor(typeof(SplinePoint))]
 	public class SplinePointEditor : Editor 
 	{
 #region InspectorGUI
