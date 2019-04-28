@@ -1,78 +1,81 @@
 ﻿using UnityEngine;
 using kTools.Splines;
 
-[ExecuteAlways]
-[RequireComponent(typeof(LineRenderer))]
-public class SplineRenderer : MonoBehaviour
+namespace kTools.Splines
 {
-#region Components
-    private LineRenderer m_LineRenderer;
-
-    /// <summary>
-    /// LineRenderer component to use for rendering.
-    /// </summary>
-    public LineRenderer lineRenderer
+    [ExecuteAlways]
+    [RequireComponent(typeof(LineRenderer))]
+    public class SplineRenderer : MonoBehaviour
     {
-        get
+#region Components
+        private LineRenderer m_LineRenderer;
+
+        /// <summary>
+        /// LineRenderer component to use for rendering.
+        /// </summary>
+        public LineRenderer lineRenderer
         {
-            if(m_LineRenderer == null)
-                m_LineRenderer = GetComponent<LineRenderer>();
-            return m_LineRenderer;
+            get
+            {
+                if(m_LineRenderer == null)
+                    m_LineRenderer = GetComponent<LineRenderer>();
+                return m_LineRenderer;
+            }
         }
-    }
 #endregion
 
 #region Properties
-    /// <summary>
-    /// Spline object to use for rendering.
-    /// </summary>
-    public Spline spline;
+        /// <summary>
+        /// Spline object to use for rendering.
+        /// </summary>
+        public Spline spline;
 
-    /// <summary>
-    /// Amount of segments to use when rendering.
-    /// </summary>
-    public int segments = 64;
+        /// <summary>
+        /// Amount of segments to use when rendering.
+        /// </summary>
+        public int segments = 64;
 #endregion
 
 #region Data
-    private Vector3[] m_Points;
+        private Vector3[] m_Points;
 #endregion
 
 #region Update
-    [ExecuteInEditMode]
-    private void Update()
-    {
-        // If no Spline return
-        if(spline == null)
-            return;
+        [ExecuteInEditMode]
+        private void Update()
+        {
+            // If no Spline return
+            if(spline == null)
+                return;
 
-        // Render Spline
-        RenderSpline();
-    }
+            // Render Spline
+            RenderSpline();
+        }
 #endregion
 
 #region Spline
-    private void RenderSpline()
-    {
-        // If no segments return
-        if(segments == 0)
-            return;
-
-        // Create points array
-        int pointCount = segments + 1;
-        m_Points = new Vector3[pointCount];
-
-        // Evaluate Spline
-        for(int i = 0; i < pointCount; i++)
+        private void RenderSpline()
         {
-            float t = (float)i / (float)pointCount;
-            SplineValue value = spline.Evaluate(t, false);
-            m_Points[i] = value.position;
-        }
+            // If no segments return
+            if(segments == 0)
+                return;
 
-        // Set LineRenderer
-        lineRenderer.positionCount = pointCount;
-        lineRenderer.SetPositions(m_Points);
-    }
+            // Create points array
+            int pointCount = segments + 1;
+            m_Points = new Vector3[pointCount];
+
+            // Evaluate Spline
+            for(int i = 0; i < pointCount; i++)
+            {
+                float t = (float)i / (float)pointCount;
+                SplineValue value = spline.Evaluate(t, false);
+                m_Points[i] = value.position;
+            }
+
+            // Set LineRenderer
+            lineRenderer.positionCount = pointCount;
+            lineRenderer.SetPositions(m_Points);
+        }
 #endregion
+    }
 }

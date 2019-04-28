@@ -16,21 +16,42 @@ namespace kTools.Splines
         private List<SplinePoint> m_Points;
 #endregion
 
+#region Properties
+        /// <summary>
+        /// Amount of Points in the Spline.
+        /// </summary>
+        public int pointCount => m_Points.Count;
+#endregion
+
 #region Initialization
 #if UNITY_EDITOR
         [MenuItem("GameObject/kTools/Spline", false, 10)]
         static void CreateSpline(MenuCommand menuCommand)
         {
             // Add a menu item for creating Splines
+            // Create a new Spline
+            // Parent, register undo and select
+            Spline spline = Spline.Create();
+            GameObjectUtility.SetParentAndAlign(spline.gameObject, menuCommand.context as GameObject);
+        }
+
+        /// <summary>
+        /// Create a new Spline.
+        /// </summary>
+        public static Spline Create()
+        {
+            // Add a menu item for creating Splines
             // Parent, register undo and select
             GameObject go = new GameObject("Spline", typeof(Spline));
-            GameObjectUtility.SetParentAndAlign(go, menuCommand.context as GameObject);
             Undo.RegisterCreatedObjectUndo(go, "Create Spline");
             Selection.activeObject = go;
 
             // Initiailize Spline
             Spline spline = go.GetComponent<Spline>();
             spline.Init();
+
+            // Finalise
+            return spline;
         }
 
         private void Reset()
@@ -66,6 +87,10 @@ namespace kTools.Splines
             // Validate Points
             for(int i = 0; i < m_Points.Count; i++)
             {
+                // If the Point is null return
+                if(m_Points[i] == null)
+                    continue;
+
                 m_Points[i].gameObject.name = string.Format("Point{0}", i);
                 m_Points[i].UpdateHandles(i, m_Points.Count);
             }
@@ -149,6 +174,21 @@ namespace kTools.Splines
                 segment = segment,
             };
 		}
+#endregion
+
+#region Get Points
+        public SplinePoint GetPoint(int index)
+        {
+            // If index is out of range return null
+            if(index < 0)
+                return null;
+            
+            if(index >= m_Points.Count)
+                return null;
+
+            // Return Point at index
+            return m_Points[index];
+        }
 #endregion
 
 #region Create Points
