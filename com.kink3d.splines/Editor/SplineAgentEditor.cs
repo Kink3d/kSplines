@@ -14,11 +14,11 @@ namespace kTools.SplinesEditor
 Loop: Return to start of spline after completion
 Ping Pong: Move along spline backwards after completion";
 
-            public static GUIContent splineText = EditorGUIUtility.TrTextContent("Spline", "Spline object to use for evaluation.");
-            public static GUIContent speedText = EditorGUIUtility.TrTextContent("Speed", "Speed to move along the spline.");
+			public static GUIContent splineText = EditorGUIUtility.TrTextContent("Spline", "Spline object to use for evaluation.");
+			public static GUIContent speedText = EditorGUIUtility.TrTextContent("Speed", "Speed to move along the Spline.");
 			public static GUIContent loopModeText = EditorGUIUtility.TrTextContent("Loop Mode", loopModeTooltip);
 			public static GUIContent playOnAwakeText = EditorGUIUtility.TrTextContent("Play On Awake", "Evaluate the Spline immediately when the Agent wakes.");
-			public static GUIContent resetOnCompleteText = EditorGUIUtility.TrTextContent("Reset On Complete", "Reset the Agent position to the start of the spline on completion.");
+			public static GUIContent resetOnCompleteText = EditorGUIUtility.TrTextContent("Reset On Complete", "Reset the Agent position to the start of the Spline on completion.");
         }
 #endregion
 
@@ -33,22 +33,24 @@ Ping Pong: Move along spline backwards after completion";
 #region Initializtion
 		private void OnEnable()
         {
-            m_SplineProp = serializedObject.FindProperty("spline");
-			m_SpeedProp = serializedObject.FindProperty("speed");
-			m_LoopModeProp = serializedObject.FindProperty("loopMode");
-			m_PlayOnAwakeProp = serializedObject.FindProperty("playOnAwake");
-			m_ResetOnCompleteProp = serializedObject.FindProperty("resetOnComplete");
+			m_SplineProp = serializedObject.FindProperty("m_Spline");
+			m_SpeedProp = serializedObject.FindProperty("m_Speed");
+			m_LoopModeProp = serializedObject.FindProperty("m_LoopMode");
+			m_PlayOnAwakeProp = serializedObject.FindProperty("m_PlayOnAwake");
+			m_ResetOnCompleteProp = serializedObject.FindProperty("m_ResetOnComplete");
         }
 #endregion
 
 #region InspectorGUI
 		public override void OnInspectorGUI()
 		{
+			serializedObject.Update();
 			EditorGUILayout.PropertyField(m_SplineProp, Styles.splineText);
 			EditorGUILayout.PropertyField(m_SpeedProp, Styles.speedText);
 			EditorGUILayout.PropertyField(m_LoopModeProp, Styles.loopModeText);
 			EditorGUILayout.PropertyField(m_PlayOnAwakeProp, Styles.playOnAwakeText);
 			EditorGUILayout.PropertyField(m_ResetOnCompleteProp, Styles.resetOnCompleteText);
+			serializedObject.ApplyModifiedProperties();
 		}
 #endregion
 	}

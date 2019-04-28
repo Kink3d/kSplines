@@ -4,6 +4,7 @@ using kTools.Splines;
 namespace kTools.Splines
 {
     [ExecuteAlways]
+    [AddComponentMenu("kTools/Spline Renderer")]
     [RequireComponent(typeof(LineRenderer))]
     public class SplineRenderer : MonoBehaviour
     {
@@ -28,15 +29,25 @@ namespace kTools.Splines
         /// <summary>
         /// Spline object to use for rendering.
         /// </summary>
-        public Spline spline;
+        public Spline spline
+        {
+            get => m_Spline;
+            set => m_Spline = value;
+        }
 
         /// <summary>
         /// Amount of segments to use when rendering.
         /// </summary>
-        public int segments = 64;
+        public int segments
+        {
+            get => m_Segments;
+            set => m_Segments = value;
+        }
 #endregion
 
 #region Data
+        [SerializeField] private Spline m_Spline;
+        [SerializeField] private int m_Segments = 64;
         private Vector3[] m_Points;
 #endregion
 

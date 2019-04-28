@@ -4,38 +4,64 @@ using kTools.Splines;
 
 namespace kTools.Splines
 {
+    [AddComponentMenu("kTools/Spline Agent")]
     public class SplineAgent : MonoBehaviour
     {
 #region Properties
         /// <summary>
         /// Spline object to use for evaluation.
         /// </summary>
-        public Spline spline;
+        public Spline spline
+        {
+            get => m_Spline;
+            set => m_Spline = value;
+        }
 
         /// <summary>
         /// Speed to move along the spline.
         /// </summary>
-        public float speed = 1.0f;
+        public float speed
+        {
+            get => m_Speed;
+            set => m_Speed = value;
+        }
 
         /// <summary>
         /// None: Do not loop.
         /// Loop: Return to start of spline after completion
         /// Ping Pong: Move along spline backwards after completion
         /// </summary>
-        public LoopMode loopMode = LoopMode.None;
+        public LoopMode loopMode
+        {
+            get => m_LoopMode;
+            set => m_LoopMode = value;
+        }
 
         /// <summary>
         /// Evaluate the Spline immediately when the Agent wakes.
         /// </summary>
-        public bool playOnAwake = false;
+        public bool playOnAwake
+        {
+            get => m_PlayOnAwake;
+            set => m_PlayOnAwake = value;
+        }
 
         /// <summary>
         /// Reset the Agent position to the start of the spline on completion.
         /// </summary>
-        public bool resetOnComplete = false;
+        public bool resetOnComplete
+        {
+            get => m_ResetOnComplete;
+            set => m_ResetOnComplete = value;
+        }
     #endregion
 
 #region Data
+        [SerializeField] private Spline m_Spline;
+        [SerializeField] private float m_Speed = 1.0f;
+        [SerializeField] private LoopMode m_LoopMode = LoopMode.None;
+        [SerializeField] private bool m_PlayOnAwake = false;
+        [SerializeField] private bool m_ResetOnComplete = false;
         private Direction m_Direction = Direction.Forward;
 #endregion
 

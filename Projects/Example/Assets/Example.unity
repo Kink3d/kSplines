@@ -721,11 +721,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 347d6a0e8385232458867d5ea93793ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spline: {fileID: 197960717}
-  speed: 0.5
-  loopMode: 1
-  playOnAwake: 1
-  resetOnComplete: 0
+  m_Spline: {fileID: 197960717}
+  m_Speed: 0.5
+  m_LoopMode: 1
+  m_PlayOnAwake: 1
+  m_ResetOnComplete: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -914,11 +914,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 347d6a0e8385232458867d5ea93793ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spline: {fileID: 130490334}
-  speed: 0.5
-  loopMode: 0
-  playOnAwake: 0
-  resetOnComplete: 1
+  m_Spline: {fileID: 130490334}
+  m_Speed: 0.5
+  m_LoopMode: 0
+  m_PlayOnAwake: 0
+  m_ResetOnComplete: 1
 --- !u!4 &739938690
 Transform:
   m_ObjectHideFlags: 0
@@ -1022,8 +1022,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bcfdbfea8fd1e64a9fc5bb0dad5038d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spline: {fileID: 103521677}
-  segments: 64
+  m_Spline: {fileID: 0}
+  m_Segments: 64
 --- !u!120 &750456289
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -1987,8 +1987,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bcfdbfea8fd1e64a9fc5bb0dad5038d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spline: {fileID: 130490334}
-  segments: 12
+  m_Spline: {fileID: 0}
+  m_Segments: 64
 --- !u!1 &1288009208
 GameObject:
   m_ObjectHideFlags: 0
@@ -2033,8 +2033,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bcfdbfea8fd1e64a9fc5bb0dad5038d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spline: {fileID: 197960717}
-  segments: 64
+  m_Spline: {fileID: 0}
+  m_Segments: 64
 --- !u!120 &1288009211
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -2602,11 +2602,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 347d6a0e8385232458867d5ea93793ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spline: {fileID: 103521677}
-  speed: 0.5
-  loopMode: 2
-  playOnAwake: 1
-  resetOnComplete: 0
+  m_Spline: {fileID: 103521677}
+  m_Speed: 0.5
+  m_LoopMode: 2
+  m_PlayOnAwake: 1
+  m_ResetOnComplete: 0
 --- !u!23 &1886099896
 MeshRenderer:
   m_ObjectHideFlags: 0

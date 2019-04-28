@@ -23,16 +23,18 @@ namespace kTools.SplinesEditor
 #region Initializtion
 		private void OnEnable()
         {
-            m_SplineProp = serializedObject.FindProperty("spline");
-			m_SegmentsProp = serializedObject.FindProperty("segments");
+			m_SplineProp = serializedObject.FindProperty("m_Spline");
+			m_SegmentsProp = serializedObject.FindProperty("m_Segments");
         }
 #endregion
 
 #region InspectorGUI
 		public override void OnInspectorGUI()
 		{
+			serializedObject.Update();
 			EditorGUILayout.PropertyField(m_SplineProp, Styles.splineText);
 			EditorGUILayout.PropertyField(m_SegmentsProp, Styles.segmentsText);
+			serializedObject.ApplyModifiedProperties();
 		}
 #endregion
 	}
