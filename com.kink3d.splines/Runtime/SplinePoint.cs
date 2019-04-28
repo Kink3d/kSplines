@@ -3,7 +3,7 @@
 namespace kTools.Splines
 {
     [AddComponentMenu("")]
-    public class Point : MonoBehaviour
+    public class SplinePoint : MonoBehaviour
     {
 #region Data
         [SerializeField]

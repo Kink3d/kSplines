@@ -4,13 +4,13 @@ using kTools.Splines;
 
 namespace kTools.SplinesEditor
 {
-	[CustomEditor(typeof(Point))]
-	public class PointEditor : Editor 
+	[CustomEditor(typeof(SplinePoint))]
+	public class SplinePointEditor : Editor 
 	{
 #region InspectorGUI
 		public override void OnInspectorGUI()
 		{
-			Point actualTarget = (Point)target;
+			SplinePoint actualTarget = (SplinePoint)target;
 		}
 #endregion
 	}

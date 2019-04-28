@@ -13,7 +13,7 @@ namespace kTools.Splines
 #endif
 
         [SerializeField]
-        private List<Point> m_Points;
+        private List<SplinePoint> m_Points;
 #endregion
 
 #region Initialization
@@ -49,7 +49,7 @@ namespace kTools.Splines
         private void Init()
         {
             // Initialize data
-            m_Points = new List<Point>();
+            m_Points = new List<SplinePoint>();
 
             // Create initial points for convenience
             CreatePointNoValidate(transform.position, transform.rotation, 0);
@@ -199,7 +199,7 @@ namespace kTools.Splines
         /// <summary>
         /// Create a new Point at the end of the Spline.
         /// </summary>
-        public Point CreatePointAtEnd()
+        public SplinePoint CreatePointAtEnd()
         {
             // Get position and rotation at end of Spline
             Transform endPoint = m_Points[m_Points.Count - 1].transform;
@@ -207,7 +207,7 @@ namespace kTools.Splines
             Quaternion rotation = endPoint.rotation;
 
             // Create new Point
-            Point point = CreatePointNoValidate(position, rotation, m_Points.Count);
+            SplinePoint point = CreatePointNoValidate(position, rotation, m_Points.Count);
 
             // Finalise
             ValidateSpline();
@@ -217,7 +217,7 @@ namespace kTools.Splines
         /// <summary>
         /// Create a new Point at the start of the Spline.
         /// </summary>
-        public Point CreatePointAtStart()
+        public SplinePoint CreatePointAtStart()
         {
             // Get position and rotation at start of Spline
             Transform startPoint = m_Points[0].transform;
@@ -225,7 +225,7 @@ namespace kTools.Splines
             Quaternion rotation = startPoint.rotation;
 
             // Create new Point
-            Point point = CreatePointNoValidate(position, rotation, 0);
+            SplinePoint point = CreatePointNoValidate(position, rotation, 0);
 
             // Finalise
             ValidateSpline();
@@ -236,21 +236,21 @@ namespace kTools.Splines
         /// Create a new Point at a position along the Spline.
         /// </summary>
         /// <param name="t">Position along the Spline to create the new Point.</param>
-        public Point CreatePointAtPosition(float t)
+        public SplinePoint CreatePointAtPosition(float t)
         {
             // Evaluate spline at t position
             SplineValue splineValue = EvaluateWithSegmentLengths(t);
             Quaternion rotation = Quaternion.LookRotation(splineValue.normal);
 
             // Create new Point
-            Point point = CreatePointNoValidate(splineValue.position, rotation, splineValue.segment + 1);
+            SplinePoint point = CreatePointNoValidate(splineValue.position, rotation, splineValue.segment + 1);
 
             // Finalise
             ValidateSpline();
             return point;
         }
 
-        private Point CreatePointNoValidate(Vector3 position, Quaternion rotation, int index)
+        private SplinePoint CreatePointNoValidate(Vector3 position, Quaternion rotation, int index)
 		{
             // Validate index
             if(index < 0 || index > m_Points.Count)
@@ -266,7 +266,7 @@ namespace kTools.Splines
 
             // Create new Point object
             // Set Transform
-			GameObject go = new GameObject(string.Format("Point{0}", index), typeof(Point));
+			GameObject go = new GameObject(string.Format("Point{0}", index), typeof(SplinePoint));
 			go.transform.SetPositionAndRotation(position, rotation);
             go.transform.SetParent(this.transform);
             go.transform.SetSiblingIndex(index);
@@ -278,7 +278,7 @@ namespace kTools.Splines
 #endif
 
             // Initiailize Point
-            Point point = go.GetComponent<Point>();
+            SplinePoint point = go.GetComponent<SplinePoint>();
 			m_Points.Insert(index, point);
 
             // Finalise
@@ -323,7 +323,7 @@ namespace kTools.Splines
         /// Remove a Point by a reference.
         /// </summary>
         /// <param name="point">The Point to remove.</param>
-        public void RemovePointByReference(Point point)
+        public void RemovePointByReference(SplinePoint point)
         {
             // Always maintain two points
             if(m_Points.Count <= 2)
@@ -351,7 +351,7 @@ namespace kTools.Splines
 #endif
 
             // Remove point
-            Point point = m_Points[index];
+            SplinePoint point = m_Points[index];
             m_Points.Remove(point);
 
 #if UNITY_EDITOR
@@ -368,7 +368,7 @@ namespace kTools.Splines
 			if(m_Points == null || m_Points.Count == 0)
 				return;
 
-			Point previousPoint = m_Points[0];
+			SplinePoint previousPoint = m_Points[0];
 			for(int p = 1; p < m_Points.Count; p++)
 			{
 				// If next point is null end

@@ -40,7 +40,7 @@ Select a Point in the Scene then click Delete to remove it.";
         private void Remove()
         {
             // Test if selection is a Point
-            Point point = Selection.activeGameObject.GetComponent<Point>();
+            SplinePoint point = Selection.activeGameObject.GetComponent<SplinePoint>();
             if(point != null)
             {
                 // Remove selected Point, close window and reselect Spline

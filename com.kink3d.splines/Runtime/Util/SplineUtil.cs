@@ -20,7 +20,7 @@ namespace kTools.Splines
 		// Compute a length of a spline segment by using 5-point Legendre-Gauss quadrature
 		// https://medium.com/@all2one/how-to-compute-the-length-of-a-spline-e44f5f04c40
 		// https://en.wikipedia.org/wiki/Gaussian_quadrature
-		internal static float GetSplineSegmentLength(Point start, Point end)
+		internal static float GetSplineSegmentLength(SplinePoint start, SplinePoint end)
 		{
 			Vector3 GetDerivative(float t)
 			{
@@ -53,7 +53,7 @@ namespace kTools.Splines
 #endregion
 
 #region Evaluation
-		internal static Vector3 EvaluateSplineSegment(Point pointA, Point pointB, float t)
+		internal static Vector3 EvaluateSplineSegment(SplinePoint pointA, SplinePoint pointB, float t)
 		{
 			var omt = 1.0f - t;
 			var omt2 = omt * omt;
@@ -66,7 +66,7 @@ namespace kTools.Splines
 			pointB.transform.position * ( t2 * t );
 		}
 
-		internal static Vector3 EvaluateSplineSegmentNormal(Point pointA, Point pointB, float t)
+		internal static Vector3 EvaluateSplineSegmentNormal(SplinePoint pointA, SplinePoint pointB, float t)
 		{
 			// Evaluate the normal for value t between points A and B
 			return ((6.0f * (t * t)) - (6.0f * t)) * pointA.position + ((3.0f * (t * t)) - ((4.0f * t) + 1)) * pointA.GetHandle(Direction.Forward)

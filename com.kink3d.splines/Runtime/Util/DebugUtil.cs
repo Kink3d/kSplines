@@ -24,7 +24,7 @@ namespace kTools.Splines
         /// <param name="point">Point to draw handle for.</param>
 		/// <param name="direction">Handle direction.</param>
 		/// <param name="color">DebugColor for the handle.</param>
-		public static void DrawHandle(Point point, Direction direction, DebugColors.DebugColor color)
+		public static void DrawHandle(SplinePoint point, Direction direction, DebugColors.DebugColor color)
 		{
 			// Draw a Handle gizmo
 			var endPoint = point.GetHandle(direction);
