@@ -5,16 +5,19 @@ namespace kTools.Splines
     [AddComponentMenu("")]
     public class SplinePoint : MonoBehaviour
     {
+#region Properties
+        /// <summary>
+        /// Position in world space.
+        /// </summary>
+        public Vector3 position => transform.position;
+#endregion
+
 #region Data
         [SerializeField]
         private bool m_HasForwardHandle;
 		
         [SerializeField]
         private bool m_HasBackwardHandle;
-#endregion
-
-#region Mutators
-        public Vector3 position => transform.position;
 #endregion
 
 #region Handles

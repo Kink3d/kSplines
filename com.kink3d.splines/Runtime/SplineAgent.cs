@@ -14,10 +14,31 @@ public class SplineAgent : MonoBehaviour
 #endregion
 
 #region Properties
+    /// <summary>
+    /// Spline object to use for evaluation.
+    /// </summary>
     public Spline spline;
+
+    /// <summary>
+    /// Speed to move along the spline.
+    /// </summary>
     public float speed = 1.0f;
+
+    /// <summary>
+    /// None: Do not loop.
+    /// Loop: Return to start of spline after completion
+    /// Ping Pong: Move along spline backwards after completion
+    /// </summary>
     public LoopMode loopMode = LoopMode.None;
+
+    /// <summary>
+    /// Evaluate the Spline immediately when the Agent wakes.
+    /// </summary>
     public bool playOnAwake = false;
+
+    /// <summary>
+    /// Reset the Agent position to the start of the spline on completion.
+    /// </summary>
     public bool resetOnComplete = false;
 #endregion
 
@@ -76,7 +97,7 @@ public class SplineAgent : MonoBehaviour
         if(loopMode != LoopMode.None)
             StartCoroutine(ExecutionEnumerator());
 
-        // If reset on complete
+        // If reset on complete set back to 0
         else if(resetOnComplete)
         {
             SplineValue value = spline.EvaluateWithSegmentLengths(0, false);

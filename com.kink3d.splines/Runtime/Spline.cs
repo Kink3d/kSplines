@@ -61,7 +61,7 @@ namespace kTools.Splines
 #endregion
 
 #region Validation
-        void ValidateSpline()
+        private void ValidateSpline()
         {
             // Validate Points
             for(int i = 0; i < m_Points.Count; i++)

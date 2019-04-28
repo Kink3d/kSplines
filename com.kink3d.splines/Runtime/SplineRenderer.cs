@@ -20,7 +20,14 @@ public class SplineRenderer : MonoBehaviour
 #endregion
 
 #region Properties
+    /// <summary>
+    /// Spline object to use for rendering.
+    /// </summary>
     public Spline spline;
+
+    /// <summary>
+    /// Amount of segments to use when rendering.
+    /// </summary>
     public int segments = 64;
 #endregion
 
